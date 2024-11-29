@@ -1,79 +1,24 @@
-import { createRouter, createWebHistory } from 'vue-router'
-
-import LoginForm from '../views/Admin/Auth/Loginform.vue';
-import EarlyFormUser from '@/views/User/EarlyForm.vue';
-import LateFormUser from '@/views/User/LateFormUser.vue';
-import MissionFormUser from '@/views/User/MissionFormUser.vue';
-import MissedScanUser from '@/views/User/MissedScanUser.vue';
-import LeaveRequestUser from '@/views/User/LeaveRequest.vue';
-import CompanyActivityUser from '@/views/User/CompanyActivity.vue';
-import AnnualLeave from '@/views/User/AnnualLeave.vue';
-import SickLeave from '@/views/User/SickLeave.vue';
-import MaternityLeave from '@/views/User/MaternityLeave.vue';
-import SpecialLeave from '@/views/User/SpecialLeave.vue';
-import HomeScreen from '@/views/Home/HomeScreen.vue';
-
+import Loginform from "@/views/Admin/Auth/Loginform.vue";
+import Dashboard from "@/views/Dashboard/Dashboard.vue";
+import Layout from "@/views/Navbar/Layout.vue";
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   {
     path: "/",
-    name: "home",
-    component: HomeScreen,
+    component: Layout,
+    children: [
+      {
+        path: "", // Empty path here means it will be the default view under "/"
+        name: "dashboard",
+        component: Dashboard,
+      },
+    ],
   },
   {
     path: "/login",
     name: "login",
-    component: LoginForm,
-  },
-  {
-    path: "/leave-request-user",
-    name: "/leave-request-user",
-    component: LeaveRequestUser,
-  },
-  {
-    path: "/early-user",
-    name: "/early-user",
-    component:  EarlyFormUser,
-  },
-  {
-    path: "/late-request-user",
-    name: "/late-request-user",
-    component: LateFormUser,
-  },
-  {
-    path: "/mission-request-user",
-    name: "/mission-request-user",
-    component: MissionFormUser,
-  },
-  {
-    path: "/missedScan-request-user",
-    name: "/missedScan-request-user",
-    component: MissedScanUser,
-  },
-  {
-    path: "/companyActivity-request-user",
-    name: "/companyActivity-request-user",
-    component: CompanyActivityUser,
-  },
-  {
-    path: "/annual-request-user",
-    name: "/annual-request-user",
-    component: AnnualLeave,
-  },
-  {
-    path: "/sick-request-user",
-    name: "/sick-request-user",
-    component: SickLeave,
-  },
-  {
-    path: "/maternity-request-user",
-    name: "/maternity-request-user",
-    component: MaternityLeave,
-  },
-  {
-    path: "/Special-request-user",
-    name: "/Special-request-user",
-    component: SpecialLeave,
+    component: Loginform,
   },
 ];
 
@@ -81,7 +26,5 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
-
-
 
 export default router;
