@@ -23,26 +23,26 @@
 
         <!-- Sidebar Links -->
         <router-link
-          to="/dashboard"
+          to="/"
           class="cursor-pointer hover:bg-[#e01a2e] text-gray-300 hover:text-white rounded-s-md ml-[20px] flex group relative"
         >
           <div class="p-[10px] w-[50px]">
             <i class="fa-solid fa-house-chimney text-[20px] text-blue-500"></i>
           </div>
           <div class="py-[10px] mx-[10px]">
-            <p class="siemreap-regular text-[16px]">Dashboard</p>
+            <p class="siemreap-regular text-[16px]">Home</p>
           </div>
         </router-link>
 
         <router-link
-          to="/employee"
+          to="/category"
           class="cursor-pointer mt-2 hover:bg-[#e01a2e] text-gray-300 hover:text-white rounded-s-md ml-[20px] flex group relative"
         >
           <div class="p-[10px] w-[50px]">
             <i class="fa-solid fa-users text-[20px] text-gray-400"></i>
           </div>
           <div class="py-[10px] mx-[10px]">
-            <p class="siemreap-regular text-[16px]">Employee Management</p>
+            <p class="siemreap-regular text-[16px]">Category</p>
           </div>
         </router-link>
 

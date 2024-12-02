@@ -1,5 +1,6 @@
 import Loginform from "@/views/Admin/Auth/Loginform.vue";
-import Dashboard from "@/views/Dashboard/Dashboard.vue";
+import Category from "@/views/Dashboard/Category.vue";
+import CreateCategory from "@/views/Dashboard/CreateCategory.vue";
 import Layout from "@/views/Navbar/Layout.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -9,9 +10,14 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: "", // Empty path here means it will be the default view under "/"
-        name: "dashboard",
-        component: Dashboard,
+        path: "/category", // Empty path here means it will be the default view under "/"
+        name: "category",
+        component: Category,
+      },
+      {
+        path: "/create-category",
+        name: "create-category",
+        component: CreateCategory,
       },
     ],
   },
