@@ -1,6 +1,8 @@
 import Loginform from "@/views/Admin/Auth/Loginform.vue";
 import Category from "@/views/Dashboard/Category.vue";
 import CreateCategory from "@/views/Dashboard/CreateCategory.vue";
+import CreateProductScreen from "@/views/Dashboard/CreateProductScreen.vue";
+import ProductScreen from "@/views/Dashboard/ProductScreen.vue";
 import Layout from "@/views/Navbar/Layout.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -18,6 +20,16 @@ const routes = [
         path: "/create-category",
         name: "create-category",
         component: CreateCategory,
+      },
+      {
+        path: "/product",
+        name: "product",
+        component: ProductScreen,
+      },
+      {
+        path: "/create-product",
+        name: "create-product",
+        component: CreateProductScreen,
       },
     ],
   },

@@ -46,6 +46,18 @@
           </div>
         </router-link>
 
+        <router-link
+          to="/product"
+          class="cursor-pointer mt-2 hover:bg-[#e01a2e] text-gray-300 hover:text-white rounded-s-md ml-[20px] flex group relative"
+        >
+          <div class="p-[10px] w-[50px]">
+            <i class="fa-solid fa-shopping-bag text-[20px] text-gray-400"></i>
+          </div>
+          <div class="py-[10px] mx-[10px]">
+            <p class="siemreap-regular text-[16px]">Product</p>
+          </div>
+        </router-link>
+
         <!-- Additional Sidebar Content... -->
       </div>
 

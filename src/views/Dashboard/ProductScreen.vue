@@ -9,29 +9,29 @@
           </a>
         </li>
         <li aria-current="page" class="font-semibold text-gray-800">
-          Create Category
+          All Products List
         </li>
       </ol>
     </nav>
-    
-    <!-- List Categories Table -->
-    <div class="w-full bg-white shadow-lg rounded-lg p-5">
+
+    <!-- List Products Table -->
+    <div class="w-full bg-white shadow-lg rounded-lg p-5 mt-4">
       <div class="flex justify-between items-center pb-4">
         <p class="text-lg font-semibold text-green-700 underline">
-          Category Lists
+          All Products List
         </p>
-        <router-link :to="{ name: 'create-category' }">
+        <router-link :to="{ name: 'create-product' }">
           <button class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-300">
-            Add Category
+            Add Product
           </button>
         </router-link>
       </div>
       <div v-if="isLoading" class="text-center py-5">
-        <p>Loading categories...</p>
+        <p>Loading products...</p>
       </div>
 
-      <div v-else-if="categories.length === 0" class="text-center py-5">
-        <p>No categories available.</p>
+      <div v-else-if="products.length === 0" class="text-center py-5">
+        <p>No products available.</p>
       </div>
 
       <table v-else class="w-full border-collapse text-sm text-gray-700">
@@ -39,15 +39,23 @@
           <tr>
             <th class="px-4 py-2 border text-[12px]">N.O</th>
             <th class="px-4 py-2 border">Category Name</th>
+            <th class="px-4 py-2 border">Product Name</th>
             <th class="px-4 py-2 border">Description</th>
+            <th class="px-4 py-2 border">Price</th>
+            <th class="px-4 py-2 border">Thumbnails</th>
             <th class="px-4 py-2 border">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(category, index) in categories" :key="category.id" class="bg-white border">
+          <tr v-for="(product, index) in products" :key="product.id" class="bg-white border">
             <td class="px-4 py-3 border">{{ index + 1 }}</td>
-            <td class="px-4 py-2 border">{{ category.name }}</td>
-            <td class="px-4 py-2 border">{{ category.description }}</td>
+            <td class="px-4 py-2 border">{{ product.category?.name || 'No Category' }}</td>
+            <td class="px-4 py-2 border">{{ product.name }}</td>
+            <td class="px-4 py-2 border">{{ product.description }}</td>
+            <td class="px-4 py-2 border">{{ product.price }}</td>
+            <td class="px-4 py-2 border">
+              <img :src="product.thumbnails" alt="Thumbnail" class="w-16 h-16 object-cover rounded">
+            </td>
             <td class="px-4 py-2 border">
               <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition ease-in-out duration-200">Edit</button>
               <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition ease-in-out duration-200 ml-2">Delete</button>
@@ -65,29 +73,29 @@ import Swal from 'sweetalert2';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default {
-  name: "CreateCategory",
+  name: "AllProductsList",
   data() {
     return {
-      categories: [],
+      products: [],
       isLoading: false,
     };
   },
   methods: {
-    async fetchCategory() {
+    async fetchProducts() {
       this.isLoading = true;
       try {
-        const response = await axios.get(`${baseUrl}/category`);
-        this.categories = response.data;
+        const response = await axios.get(`${baseUrl}/product`);
+        this.products = response.data;
       } catch (error) {
-        console.error("Error fetching", error);
-        Swal.fire('Error!', 'Failed to fetch category. Please try again later.', 'error');
+        console.error("Error fetching products:", error);
+        Swal.fire('Error!', 'Failed to fetch products. Please try again later.', 'error');
       } finally {
         this.isLoading = false;
       }
     },
   },
   mounted() {
-    this.fetchCategory();
+    this.fetchProducts();
   },
 };
 </script>

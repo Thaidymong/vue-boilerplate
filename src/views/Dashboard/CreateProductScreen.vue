@@ -1,14 +1,46 @@
 <template>
   <div class="container">
-    <p class="title text-center">Create Category</p>
-    <form @submit.prevent="handleSubmit" class="category-form">
+    <p class="title text-center">Create Product</p>
+    <form @submit.prevent="handleSubmit" class="product-form">
       <div class="form-group">
-        <label for="name" class="form-label">Category Name</label>
+        <label for="name" class="form-label">Product Name</label>
         <input
           type="text"
           id="name"
           v-model="form.name"
           required
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label for="categoryId" class="form-label">Category</label>
+        <select
+          id="categoryId"
+          v-model="form.categoryId"
+          required
+          class="form-input"
+        >
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="price" class="form-label">Price</label>
+        <input
+          type="number"
+          id="price"
+          v-model="form.price"
+          required
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label for="thumbnails" class="form-label">Thumbnails</label>
+        <input
+          type="text"
+          id="thumbnails"
+          v-model="form.thumbnails"
           class="form-input"
         />
       </div>
@@ -30,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
@@ -41,21 +73,40 @@ const router = useRouter();
 const form = ref({
   name: "",
   description: "",
+  price: null,
+  thumbnails: "",
+  categoryId: null,
+});
+
+const categories = ref([]);
+
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/category`);
+    categories.value = response.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    Swal.fire('Error!', 'Failed to fetch categories. Please try again later.', 'error');
+  }
+};
+
+onMounted(() => {
+  fetchCategories();
 });
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post(`${baseUrl}/category`, form.value);
+    const response = await axios.post(`${baseUrl}/product`, form.value);
 
     if ([200, 201].includes(response.status)) {
-      Swal.fire("Success!", "Category added successfully!", "success");
-      router.push("/category");
+      Swal.fire("Success!", "Product added successfully!", "success");
+      router.push("/product");
     } else {
       throw new Error("Unexpected response status: " + response.status);
     }
   } catch (error) {
-    console.error("Error adding Category:", error);
-    Swal.fire("Error!", error.response?.data?.message || error.message || "Failed to add Category. Please try again later.", "error");
+    console.error("Error adding Product:", error);
+    Swal.fire("Error!", error.response?.data?.message || error.message || "Failed to add Product. Please try again later.", "error");
   }
 };
 </script>
@@ -78,7 +129,7 @@ const handleSubmit = async () => {
   margin-bottom: 1.5rem;
 }
 
-.category-form {
+.product-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
