@@ -20,12 +20,18 @@
         <p class="text-lg font-semibold text-green-700 underline">
           All Products List
         </p>
-        <router-link :to="{ name: 'create-product' }">
-          <button class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-300">
+        <router-link :to="{ name: 'add-product' }">
+          <button
+            class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md 
+                   hover:bg-green-700 focus:outline-none focus:ring-2 
+                   focus:ring-green-500 focus:ring-opacity-50 transition 
+                   ease-in-out duration-300"
+          >
             Add Product
           </button>
         </router-link>
       </div>
+
       <div v-if="isLoading" class="text-center py-5">
         <p>Loading products...</p>
       </div>
@@ -34,31 +40,66 @@
         <p>No products available.</p>
       </div>
 
-      <table v-else class="w-full border-collapse text-sm text-gray-700">
+      <!-- Make the table 'fixed' to enforce column widths -->
+      <table class="table-fixed w-full border-collapse text-sm text-gray-700">
         <thead class="bg-gray-100 text-xs">
           <tr>
-            <th class="px-4 py-2 border text-[12px]">N.O</th>
-            <th class="px-4 py-2 border">Category Name</th>
-            <th class="px-4 py-2 border">Product Name</th>
-            <th class="px-4 py-2 border">Description</th>
-            <th class="px-4 py-2 border">Price</th>
-            <th class="px-4 py-2 border">Thumbnails</th>
-            <th class="px-4 py-2 border">Actions</th>
+            <th class="px-4 py-2 border text-[12px] w-[50px]">N.O</th>
+            <th class="px-4 py-2 border w-[150px]">Category Name</th>
+            <th class="px-4 py-2 border w-[150px]">Product Name</th>
+            <!-- Description column with fixed width -->
+            <th
+              class="px-4 py-2 border w-[250px] overflow-hidden 
+                     text-ellipsis whitespace-nowrap"
+            >
+              Description
+            </th>
+            <th class="px-4 py-2 border w-[80px]">Price</th>
+            <th class="px-4 py-2 border w-[120px]">Thumbnails</th>
+            <th class="px-4 py-2 border w-[140px]">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(product, index) in products" :key="product.id" class="bg-white border">
-            <td class="px-4 py-3 border">{{ index + 1 }}</td>
-            <td class="px-4 py-2 border">{{ product.category?.name || 'No Category' }}</td>
+          <tr
+            v-for="(product, index) in products"
+            :key="product.id"
+            class="bg-white border"
+          >
+            <td class="px-4 py-3 border text-center">{{ index + 1 }}</td>
+            <td class="px-4 py-2 border">
+              {{ product.category?.name || 'No Category' }}
+            </td>
             <td class="px-4 py-2 border">{{ product.name }}</td>
-            <td class="px-4 py-2 border">{{ product.description }}</td>
+            <!-- Truncated Description -->
+            <td
+              class="px-4 py-2 border w-[250px] overflow-hidden 
+                     text-ellipsis whitespace-nowrap"
+            >
+              {{ product.description }}
+            </td>
             <td class="px-4 py-2 border">{{ product.price }}</td>
             <td class="px-4 py-2 border">
-              <img :src="product.thumbnails" alt="Thumbnail" class="w-16 h-16 object-cover rounded">
+              <img
+                :src="product.thumbnails"
+                alt="Thumbnail"
+                class="w-16 h-16 object-cover rounded"
+              />
             </td>
             <td class="px-4 py-2 border">
-              <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition ease-in-out duration-200">Edit</button>
-              <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition ease-in-out duration-200 ml-2">Delete</button>
+              <router-link :to="{ name: 'updateProduct', params: { id: product.id } }">
+                <button
+                  class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 
+                         transition ease-in-out duration-200"
+                >
+                  Edit
+                </button>
+              </router-link>
+              <button
+                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 
+                       transition ease-in-out duration-200 ml-2"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -101,6 +142,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* Existing styles remain here. Add/modify as you wish. */
 .breadcrumb-container {
   background-color: #f8f9fa;
   padding: 1rem;
