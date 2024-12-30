@@ -32,22 +32,23 @@
         </router-link>
       </div>
 
+      <!-- Loading state -->
       <div v-if="isLoading" class="text-center py-5">
         <p>Loading products...</p>
       </div>
 
+      <!-- No products state -->
       <div v-else-if="products.length === 0" class="text-center py-5">
         <p>No products available.</p>
       </div>
 
-      <!-- Make the table 'fixed' to enforce column widths -->
-      <table class="table-fixed w-full border-collapse text-sm text-gray-700">
+      <!-- Products Table -->
+      <table class="table-fixed w-full border-collapse text-sm text-gray-700" v-else>
         <thead class="bg-gray-100 text-xs">
           <tr>
             <th class="px-4 py-2 border text-[12px] w-[50px]">N.O</th>
             <th class="px-4 py-2 border w-[150px]">Category Name</th>
             <th class="px-4 py-2 border w-[150px]">Product Name</th>
-            <!-- Description column with fixed width -->
             <th
               class="px-4 py-2 border w-[250px] overflow-hidden 
                      text-ellipsis whitespace-nowrap"
@@ -70,7 +71,6 @@
               {{ product.category?.name || 'No Category' }}
             </td>
             <td class="px-4 py-2 border">{{ product.name }}</td>
-            <!-- Truncated Description -->
             <td
               class="px-4 py-2 border w-[250px] overflow-hidden 
                      text-ellipsis whitespace-nowrap"
@@ -95,6 +95,7 @@
                 </button>
               </router-link>
               <button
+                @click="confirmDelete(product)"
                 class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 
                        transition ease-in-out duration-200 ml-2"
               >
@@ -108,41 +109,69 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export default {
-  name: "AllProductsList",
-  data() {
-    return {
-      products: [],
-      isLoading: false,
-    };
-  },
-  methods: {
-    async fetchProducts() {
-      this.isLoading = true;
-      try {
-        const response = await axios.get(`${baseUrl}/product`);
-        this.products = response.data;
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        Swal.fire('Error!', 'Failed to fetch products. Please try again later.', 'error');
-      } finally {
-        this.isLoading = false;
-      }
-    },
-  },
-  mounted() {
-    this.fetchProducts();
-  },
-};
+// Reactive data
+const products = ref([]);
+const isLoading = ref(false);
+
+// Fetch all products
+async function fetchProducts() {
+  isLoading.value = true;
+  try {
+    const response = await axios.get(`${baseUrl}/product`);
+    products.value = response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    Swal.fire('Error!', 'Failed to fetch products. Please try again later.', 'error');
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+// Direct delete function
+async function deleteProduct(productId) {
+  try {
+    await axios.delete(`${baseUrl}/product/${productId}`);
+    Swal.fire('Success!', 'Product deleted successfully!', 'success');
+    // Refresh the product list
+    fetchProducts();
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    Swal.fire('Error!', 'Failed to delete product. Please try again later.', 'error');
+  }
+}
+
+// Confirm delete with SweetAlert
+async function confirmDelete(product) {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: `You are about to delete "${product.name}". This action cannot be undone.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel!',
+    reverseButtons: true,
+  });
+
+  if (result.isConfirmed) {
+    await deleteProduct(product.id);
+  }
+}
+
+// Lifecycle hook
+onMounted(() => {
+  fetchProducts();
+});
 </script>
 
-<style lang="scss" scoped>
-/* Existing styles remain here. Add/modify as you wish. */
+<style scoped lang="scss">
+/* Breadcrumb container */
 .breadcrumb-container {
   background-color: #f8f9fa;
   padding: 1rem;
@@ -151,6 +180,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Breadcrumb styles */
 .breadcrumb {
   margin-bottom: 0;
   font-size: 1rem;
@@ -175,6 +205,7 @@ export default {
   }
 }
 
+/* Create category form (if you need it in this file) */
 .create-category {
   max-width: 500px;
   margin: 2rem auto;

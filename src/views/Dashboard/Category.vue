@@ -21,19 +21,28 @@
           Category Lists
         </p>
         <router-link :to="{ name: 'create-category' }">
-          <button class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-300">
+          <button
+            class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md
+                   hover:bg-green-700 focus:outline-none focus:ring-2
+                   focus:ring-green-500 focus:ring-opacity-50 transition
+                   ease-in-out duration-300"
+          >
             Add Category
           </button>
         </router-link>
       </div>
+
+      <!-- Loading state -->
       <div v-if="isLoading" class="text-center py-5">
         <p>Loading categories...</p>
       </div>
 
+      <!-- No categories state -->
       <div v-else-if="categories.length === 0" class="text-center py-5">
         <p>No categories available.</p>
       </div>
 
+      <!-- Categories Table -->
       <table v-else class="w-full border-collapse text-sm text-gray-700">
         <thead class="bg-gray-100 text-xs">
           <tr>
@@ -44,13 +53,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(category, index) in categories" :key="category.id" class="bg-white border">
+          <tr
+            v-for="(category, index) in categories"
+            :key="category.id"
+            class="bg-white border"
+          >
             <td class="px-4 py-3 border">{{ index + 1 }}</td>
             <td class="px-4 py-2 border">{{ category.name }}</td>
             <td class="px-4 py-2 border">{{ category.description }}</td>
             <td class="px-4 py-2 border">
-              <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition ease-in-out duration-200">Edit</button>
-              <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition ease-in-out duration-200 ml-2">Delete</button>
+              <router-link :to="{ name: 'updateCategory', params: { id: category.id } }">
+                <button
+                  class="bg-blue-600 text-white px-3 py-1 rounded
+                         hover:bg-blue-700 transition ease-in-out duration-200"
+                >
+                  Edit
+                </button>
+              </router-link>
+             
+              <button
+                @click="confirmDelete(category)"
+                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700
+                       transition ease-in-out duration-200 ml-2"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -59,37 +86,65 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+
+// Base URL (from your .env file or hardcode if needed)
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export default {
-  name: "CreateCategory",
-  data() {
-    return {
-      categories: [],
-      isLoading: false,
-    };
-  },
-  methods: {
-    async fetchCategory() {
-      this.isLoading = true;
-      try {
-        const response = await axios.get(`${baseUrl}/category`);
-        this.categories = response.data;
-      } catch (error) {
-        console.error("Error fetching", error);
-        Swal.fire('Error!', 'Failed to fetch category. Please try again later.', 'error');
-      } finally {
-        this.isLoading = false;
-      }
-    },
-  },
-  mounted() {
-    this.fetchCategory();
-  },
-};
+// Reactive state
+const categories = ref([]);
+const isLoading = ref(false);
+
+// Fetch all categories from API
+async function fetchCategory() {
+  isLoading.value = true;
+  try {
+    const response = await axios.get(`${baseUrl}/category`);
+    categories.value = response.data;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    Swal.fire('Error!', 'Failed to fetch categories. Please try again later.', 'error');
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+// Show SweetAlert2 confirmation before deleting
+async function confirmDelete(category) {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: `You are about to delete "${category.name}". This action cannot be undone.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel!',
+    reverseButtons: true,
+  });
+  if (result.isConfirmed) {
+    await deleteCategory(category.id);
+  }
+}
+
+// Perform the actual category deletion
+async function deleteCategory(id) {
+  try {
+    await axios.delete(`${baseUrl}/category/${id}`);
+    Swal.fire('Deleted!', 'Category has been deleted.', 'success');
+    // Refresh the list
+    fetchCategory();
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    Swal.fire('Error!', 'Failed to delete category. Please try again later.', 'error');
+  }
+}
+
+// Fetch categories on component mount
+onMounted(() => {
+  fetchCategory();
+});
 </script>
 
 <style lang="scss" scoped>
